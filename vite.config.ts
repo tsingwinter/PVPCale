@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
         injectRegister: 'auto',
         includeAssets: ['favicon.svg'],
         manifest: {
-          name: 'PVPCale',
-          short_name: 'PVPCale',
-          description: 'PVP 伤害对比计算器',
+          name: 'PVPVECale',
+          short_name: 'PVPVECale',
+          description: '纯面板伤害计算器（PVP / PVE）',
           theme_color: '#0f1117',
           background_color: '#0f1117',
           display: 'standalone',

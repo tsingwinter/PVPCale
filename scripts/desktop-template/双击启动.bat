@@ -1,4 +1,4 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-start "" "%~dp0PVPCale.exe"
+start "" "%~dp0PVPVECale.exe"

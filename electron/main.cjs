@@ -7,7 +7,7 @@ function createWindow() {
     height: 860,
     minWidth: 360,
     minHeight: 640,
-    title: 'PVPCale',
+    title: 'PVPVECale',
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,

@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { calcBreakdown, calcDamage, type DamageBreakdown } from '../engine/damage'
-import type { PlayerStats } from '../types/player'
+import type { CalcMode, CompareKind, PlayerStats } from '../types/player'
 
 const props = defineProps<{
   playerA: PlayerStats
   playerB: PlayerStats
+  mode: CalcMode
+  compareKind?: CompareKind
 }>()
 
-const damageAtoB = computed(() => calcDamage(props.playerA, props.playerB))
-const damageBtoA = computed(() => calcDamage(props.playerB, props.playerA))
+const isDelta = computed(() => props.compareKind === 'delta')
 
-const breakdownA = computed(() => calcBreakdown(props.playerA, props.playerB))
-const breakdownB = computed(() => calcBreakdown(props.playerB, props.playerA))
+const leftLabel = computed(() => (isDelta.value ? '原面板' : 'A'))
+const rightLabel = computed(() => (isDelta.value ? '变动后' : 'B'))
+
+const damageAtoB = computed(() => calcDamage(props.playerA, props.playerB, props.mode))
+const damageBtoA = computed(() => calcDamage(props.playerB, props.playerA, props.mode))
+
+const breakdownA = computed(() => calcBreakdown(props.playerA, props.playerB, props.mode))
+const breakdownB = computed(() => calcBreakdown(props.playerB, props.playerA, props.mode))
 
 type Winner = 'A' | 'B' | 'tie'
 type BreakdownKey = keyof Omit<DamageBreakdown, 'total'>
@@ -23,14 +30,23 @@ interface BreakdownRow {
   format: 'number' | 'mult'
 }
 
-const breakdownRows: BreakdownRow[] = [
-  { key: 'attack', label: '攻击力', format: 'number' },
-  { key: 'damageBonus', label: '伤害加成', format: 'mult' },
-  { key: 'crit', label: '暴击期望', format: 'mult' },
-  { key: 'fire', label: '火系增伤', format: 'mult' },
-  { key: 'buff', label: '增伤乘区', format: 'mult' },
-  { key: 'pvp', label: 'PVP 乘区', format: 'mult' },
-]
+const breakdownRows = computed((): BreakdownRow[] => {
+  const rows: BreakdownRow[] = [
+    { key: 'attack', label: '总攻击力', format: 'number' },
+    { key: 'damageBonus', label: '伤害加成', format: 'mult' },
+    { key: 'crit', label: '暴击期望', format: 'mult' },
+    { key: 'fire', label: '火系增伤', format: 'mult' },
+    {
+      key: 'buff',
+      label: props.mode === 'elite' ? '增伤乘区（含对精英）' : '增伤乘区',
+      format: 'mult',
+    },
+  ]
+  if (props.mode === 'pvp') {
+    rows.push({ key: 'pvp', label: 'PVP 乘区', format: 'mult' })
+  }
+  return rows
+})
 
 const winner = computed((): Winner => {
   const a = damageAtoB.value
@@ -58,30 +74,38 @@ function formatMult(value: number): string {
 
 function formatBreakdownValue(row: BreakdownRow, breakdown: DamageBreakdown): string {
   const value = breakdown[row.key]
-  return row.format === 'number' ? value.toLocaleString('zh-CN') : formatMult(value)
+  return row.format === 'number'
+    ? Math.round(value).toLocaleString('zh-CN')
+    : formatMult(value)
 }
 </script>
 
 <template>
   <section class="result">
-    <h2 class="result-title">对战结果</h2>
+    <h2 class="result-title">{{ isDelta ? '变动影响结果' : '对战结果' }}</h2>
 
     <div class="damage-cards">
       <article class="damage-card" :class="{ winner: winner === 'A' }">
-        <p class="card-label">A → B 伤害</p>
+        <p class="card-label">{{ leftLabel }} → {{ rightLabel }} 伤害</p>
         <p class="card-value">{{ formatDamage(damageAtoB) }}</p>
       </article>
 
       <div class="vs">VS</div>
 
       <article class="damage-card" :class="{ winner: winner === 'B' }">
-        <p class="card-label">B → A 伤害</p>
+        <p class="card-label">{{ rightLabel }} → {{ leftLabel }} 伤害</p>
         <p class="card-value">{{ formatDamage(damageBtoA) }}</p>
       </article>
     </div>
 
     <p class="verdict">
-      <template v-if="winner === 'tie'">双方伤害相同</template>
+      <template v-if="winner === 'tie'">两侧伤害相同</template>
+      <template v-else-if="isDelta">
+        {{ winner === 'A' ? '原面板' : '变动后' }}伤害更高
+        <span class="diff">
+          （差值 {{ formatDamage(Math.abs(damageAtoB - damageBtoA)) }}）
+        </span>
+      </template>
       <template v-else>
         玩家 {{ winner }} 伤害更高
         <span class="diff">
@@ -96,9 +120,9 @@ function formatBreakdownValue(row: BreakdownRow, breakdown: DamageBreakdown): st
         <table class="breakdown-table">
           <thead>
             <tr>
-              <th>A → B</th>
+              <th>{{ leftLabel }} → {{ rightLabel }}</th>
               <th>乘区</th>
-              <th>B → A</th>
+              <th>{{ rightLabel }} → {{ leftLabel }}</th>
             </tr>
           </thead>
           <tbody>

@@ -1,10 +1,10 @@
-PVPCale 手机版 - 使用说明
+PVPVECale 手机版 - 使用说明
 
 【推荐方式：添加到主屏幕（像 App 一样）】
 
 前提：你需要有一个可访问的网址（例如作者提供的链接）。
 
-1. 用手机浏览器（Safari / Chrome）打开 PVPCale 网址
+1. 用手机浏览器（Safari / Chrome）打开 PVPVECale 网址
 2. 等待页面完全加载（首次需要联网）
 3. 添加到主屏幕：
    - iPhone（Safari）：点底部分享按钮 →「添加到主屏幕」→ 确认

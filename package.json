@@ -1,5 +1,5 @@
 {
-  "name": "pvpcale",
+  "name": "pvpvecale",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -28,8 +28,8 @@
     "vue-tsc": "^3.3.5"
   },
   "build": {
-    "appId": "com.pvpcale.app",
-    "productName": "PVPCale",
+    "appId": "com.pvpvecale.app",
+    "productName": "PVPVECale",
     "directories": {
       "output": "release-desktop"
     },
@@ -61,8 +61,8 @@
       "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "PVPCale",
-      "artifactName": "PVPCale-Setup-${version}.exe",
+      "shortcutName": "PVPVECale",
+      "artifactName": "PVPVECale-Setup-${version}.exe",
       "deleteAppDataOnUninstall": false,
       "installerLanguages": [
         "zh_CN",

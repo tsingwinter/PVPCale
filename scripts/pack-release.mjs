@@ -6,8 +6,8 @@ import { execSync } from 'node:child_process'
 const root = fileURLToPath(new URL('..', import.meta.url))
 const distDir = join(root, 'dist')
 const releaseDir = join(root, 'release')
-const outputDir = join(releaseDir, 'PVPCale-网页版')
-const zipPath = join(releaseDir, 'PVPCale-网页版.zip')
+const outputDir = join(releaseDir, 'PVPVECale-网页版')
+const zipPath = join(releaseDir, 'PVPVECale-网页版.zip')
 const mobileReadme = join(root, 'scripts', 'mobile-template', '手机使用说明.txt')
 
 if (!existsSync(distDir)) {
